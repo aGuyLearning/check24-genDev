@@ -1,0 +1,20 @@
+  <mat-toolbar>
+    <span>Angular Material Demo</span>
+  </mat-toolbar>
+
+  <mat-form-field>
+    <input type="text"
+       placeholder="Pick one"
+       aria-label="Number"
+       matInput
+       [formControl]="teamControl"
+       [matAutocomplete]="auto">
+    <mat-autocomplete #auto="matAutocomplete">
+      @for (team of filteredTeams; track team) {
+        <mat-option [value]="team">{{team}}</mat-option>
+      }
+    </mat-autocomplete>
+    
+  </mat-form-field>
+
+<router-outlet />

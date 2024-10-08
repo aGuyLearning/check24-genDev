@@ -1,0 +1,1 @@
+DATABASE = "./check24-challenge.db"
