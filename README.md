@@ -15,6 +15,16 @@ More inspiration for additional features could be:
 3. Visualize the upcoming games and the availability on streaming services
 
 
+
+## Optimum Package Selection
+- [ ] The user can select one or multiple teams
+- [ ] All needed packages are selected
+- [ ] Covered and uncovered games are displayed
+- [ ] The best price combination is displayed
+- [ ] The user can  select if yearly packages should be selected
+- [ ] Create a shedule, when to subscribe to which package
+- [ ] Dispaly shedule in a calendar
+
 ## Technologies
 - Python
 - Flask
@@ -29,3 +39,6 @@ More inspiration for additional features could be:
 ## Modes
 - search for my team
 - search for my tournament
+
+# Games Missing Streaming Services
+- 8533 (Bayern Game)
