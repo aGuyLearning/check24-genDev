@@ -1,7 +1,7 @@
 import datetime
 from pulp import LpMinimize, LpProblem, LpVariable, lpSum
 from config import DATE_FORMAT, REDUCED_DATE_FORMAT
-from db_queries import get_games_by_team_name
+from db_queries import get_games_by_team_name_and_tournament_name
 
 
 def get_package_coverage(game_ids, query_db):

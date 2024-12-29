@@ -1,5 +1,4 @@
 import datetime
-import traceback
 from flask import Flask, abort, g, json, jsonify, request
 from flask_cors import CORS
 import sqlite3
@@ -88,12 +87,17 @@ def get_tournament_coverage():
 def get_streaming_packages_for_team_and_tournament():
     try:
         team_names = request.args.getlist('teams')
-        tournament_name = request.args.get('tournament_name')
+        tournament_names = request.args.getlist('tournaments')
+        print(team_names)
+        print(tournament_names)
         start_time = request.args.get('start_date', datetime.datetime.now())
         # format the start time
         start_time = datetime.datetime.strptime(start_time, REDUCED_DATE_FORMAT)
 
-        games = query_db(get_games_by_team_name(team_names),team_names*2 + [str(start_time)])
+        end_time = request.args.get('end_date', LAST_GAME_DATE)
+        end_time = datetime.datetime.strptime(end_time, REDUCED_DATE_FORMAT)
+
+        games = query_db(get_games_by_team_name_and_tournament_name(team_names, tournament_names),team_names*2 + tournament_names + [str(start_time), str(end_time)])
 
 
         result = find_streaming_packages_with_timeframes(
@@ -115,7 +119,7 @@ def get_streaming_packages_for_all_games():
         start_time = datetime.datetime.strptime(start_time, REDUCED_DATE_FORMAT)
         end_time = request.args.get('end_date', LAST_GAME_DATE)
 
-        games = query_db(get_all_games, [str(start_time)])
+        games = query_db(get_all_games, [str(start_time), str(end_time)])
 
 
         result = find_streaming_packages_with_timeframes(
@@ -124,7 +128,6 @@ def get_streaming_packages_for_all_games():
 
     except Exception as e:
         return str(e), 500
-
     
 @app.route('/get_game_info')
 def get_game_info():

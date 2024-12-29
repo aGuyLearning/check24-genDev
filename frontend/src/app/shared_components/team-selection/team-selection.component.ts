@@ -7,7 +7,7 @@ import {
   Input,
 } from '@angular/core';
 import { MatCardModule } from '@angular/material/card';
-import { Router, RouterOutlet, ActivatedRoute } from '@angular/router';
+import { Router, RouterOutlet } from '@angular/router';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
@@ -247,6 +247,7 @@ export class TeamSelectionComponent implements OnInit {
       if (tournaments) {
         params['tournaments'] = tournaments;
       }
+    }
       if (this.filterForm.value.start_date) {
         // handle time zone offset
         const form_start_date = new Date(this.filterForm.value.start_date);
@@ -263,7 +264,7 @@ export class TeamSelectionComponent implements OnInit {
       } else {
         params['end'] = this.DEFAULT_END_DATE;
       }
-    }
+    
     this.router.navigate(['/streaming-packages'], {
       queryParams: params,
     });

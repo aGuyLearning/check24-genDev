@@ -74,7 +74,7 @@ def get_packages_for_teams(teams):
         AND g.starts_at >= ?;
         """.format(','.join('?' * len(teams)))
 
-def get_games_by_team_name(team_names):
+def get_games_by_team_name_and_tournament_name(team_names, tournament_names):
     """
     Generate SQL query to get all games associated with a list of team names
     Args:
@@ -87,17 +87,17 @@ def get_games_by_team_name(team_names):
     generated_query = """
     SELECT DISTINCT g.id, g.starts_at, g.tournament_name, g.team_home, g.team_away
     FROM bc_game g
-    WHERE (g.team_home IN ({0}) OR g.team_away IN ({0}))
-    AND g.starts_at >= ?
+    WHERE ((g.team_home IN ({0}) OR g.team_away IN ({0})) OR g.tournament_name IN ({1}))
+    AND g.starts_at >= ? AND g.starts_at <= ?
     ORDER BY g.starts_at;
-    """.format(','.join('?' * len(team_names)))
+    """.format(','.join('?' * len(team_names)), ','.join('?' * len(tournament_names)))
     
     return generated_query
 
 get_all_games = """
 SELECT DISTINCT g.id, g.starts_at, g.tournament_name, g.team_home, g.team_away
 FROM bc_game g
-WHERE g.starts_at >= ?
+WHERE g.starts_at >= ? AND g.starts_at <= ?
 ORDER BY g.starts_at;
 """
 

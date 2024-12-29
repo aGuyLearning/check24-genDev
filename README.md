@@ -13,6 +13,7 @@ This repository contains the code for the 2024 check24 GenDev Scholarship challe
 ## Run
 1. cd into the backend folder
 2. Run `flask --app app run`
+    * if multiple versions of python are installed, use `python3 -m flask --app app run`
 3. `cd` into the frontend folder
 4. run `ng serve --open`
 5. The app should open in your browser(localhost:4200)
@@ -42,10 +43,11 @@ More inspiration for additional features could be:
 - [ ] Quick select option, e.g. "next match", "first game"
 
 ## Technologies
-- Python
-- Flask
+- Python (>= 3.12.7)
+- Flask (3.0.3)
 - sqlite3
-- Angular
+- npm 
+- Angular (17.3.0)
 
 ## Possible Improvements
 - add conversational agent that helps you find the best price plan for your team

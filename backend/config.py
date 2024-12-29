@@ -1,4 +1,4 @@
-DATABASE = "/Users/carlbuchholz/Documents/GitHub/check24-genDev/backend/check24-challenge.db"
+DATABASE = "./check24-challenge.db"
 # example date: 2025-01-29 20:00:00
 REDUCED_DATE_FORMAT = "%Y-%m-%d"
 DATE_FORMAT = "%Y-%m-%d %H:%M:%S"
