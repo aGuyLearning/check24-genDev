@@ -1,11 +1,27 @@
 # check24-genDev
-Thsi repository contains the code for the 2024 check24 GenDev Scholarship challenge
+This repository contains the code for the 2024 check24 GenDev Scholarship challenge
+
+## Setup
+1. Clone the repository
+2. Install the requirements
+   1. We suggest using a virtual environment for the project
+   2. Run `pip install -r requirements.txt`
+   3. `cd` into the frontend folder
+   4. Run `npm install`
+
+   
+## Run
+1. cd into the backend folder
+2. Run `flask --app app run`
+3. `cd` into the frontend folder
+4. run `ng serve --open`
+5. The app should open in your browser(localhost:4200)
 
 ## Minimum Requirements
-- Team selection for one or multiple teams
-- Ranking of streaming packages based on availability of streamed matches
-- Offering the smallest price combination you can find if one package doesn't cover everything
-- Reasonable search time (make sure UX is not affected in a negative way)
+- [X] Team selection for one or multiple teams
+- [X] Ranking of streaming packages based on availability of streamed matches
+- [X] Offering the smallest price combination you can find if one package doesn't cover everything
+- [X] Reasonable search time (make sure UX is not affected in a negative way)
 
 There's always room for an improved feature set. Maybe it can make sense to book monthly packages one after another expires, instead of purchasing multiple yearly ones together. Improve, adapt, overcome.
 More inspiration for additional features could be:
@@ -29,6 +45,7 @@ More inspiration for additional features could be:
 - Python
 - Flask
 - sqlite3
+- Angular
 
 ## Possible Improvements
 - add conversational agent that helps you find the best price plan for your team
@@ -37,6 +54,3 @@ More inspiration for additional features could be:
 - use external cache to store the data so that the search time is reduced
 - update DB to sharded DB to counteract hotspots (Bayern and Barcelona should not be on the same shard)
 
-## Modes
-- search for my team
-- search for my tournament
