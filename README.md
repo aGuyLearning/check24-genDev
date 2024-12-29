@@ -17,13 +17,13 @@ More inspiration for additional features could be:
 
 
 ## Optimum Package Selection
-- [ ] The user can select one or multiple teams
-- [ ] All needed packages are selected
-- [ ] Covered and uncovered games are displayed
-- [ ] The best price combination is displayed
-- [ ] The user can  select if yearly packages should be selected
-- [ ] Create a shedule, when to subscribe to which package
-- [ ] Dispaly shedule in a calendar
+- [X] The user can select one or multiple teams
+- [X] Covered and uncovered games are displayed
+- [X] The best price combination is displayed
+- [X] Create a shedule, when to subscribe to which package
+- [X] Dispaly shedule in a calendar
+- [X] The user can select a starting date from when to look (default is today)
+- [ ] Quick select option, e.g. "next match", "first game"
 
 ## Technologies
 - Python
@@ -31,14 +31,12 @@ More inspiration for additional features could be:
 - sqlite3
 
 ## Possible Improvements
-- Add country to each tournament so that the user can filter by country
 - add conversational agent that helps you find the best price plan for your team
-- add monthl or yearly budget to the user profile so that the user can get the best price plan for his budget
+- add monthly or yearly budget to the user profile so that the user can get the best price plan for his budget
+- add a importance order to different tournaments so that the user can get the best price plan for his favorite tournaments
 - use external cache to store the data so that the search time is reduced
+- update DB to sharded DB to counteract hotspots (Bayern and Barcelona should not be on the same shard)
 
 ## Modes
 - search for my team
 - search for my tournament
-
-# Games Missing Streaming Services
-- 8533 (Bayern Game)

@@ -1,0 +1,75 @@
+body {
+  margin: 0;
+  font-family: "Roboto", sans-serif;
+  background-color: var(--background-color);
+  color: var(--text-color);
+}
+
+h1, h2, h3 {
+  margin: 0;
+  line-height: 1.2;
+}
+
+section{
+  height: 95vh;
+}
+
+.section-title {
+  font-size: 2rem; /* Prominent and eye-catching */
+  font-weight: 700; /* Bold */
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
+.section-header {
+  font-size: 3rem; /* Prominent and eye-catching */
+  font-weight: 700; /* Bold */
+  text-align: center;
+}
+.section-subheader {
+  font-size: 1.5rem; /* Smaller than headers */
+  font-weight: 400; /* Regular weight for contrast with headers */
+  margin-top: 0.5rem; /* Space between header and subheader */
+  line-height: 1.5;
+}
+
+.subtitle {
+  font-size: 1.25rem;
+  margin-top: 0;
+}
+
+.main-content {
+  display: flex;
+  flex-direction: column;
+}
+.banner-section {
+  background-image: url(../../../assets/Germany_UCL_Football_Desktop_2x__2___1_.webp);
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  position: relative;
+  width: 100%;
+  height: 90vh;
+  display: flex;
+  justify-content: left;
+  align-items: center;
+}
+
+.complete-coverage-section{
+  background-color: black;
+  color: white;
+}
+
+.search-bar {
+  text-align: center;
+  padding: 0 0 0 12rem;
+  color: white;
+}
+
+.footer {
+  text-align: center;
+  padding: 1rem;
+  background: var(--violet-dark);
+  color: white;
+  font-size: 0.875rem;
+}

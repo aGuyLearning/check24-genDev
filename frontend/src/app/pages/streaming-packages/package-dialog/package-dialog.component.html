@@ -1,0 +1,19 @@
+<mat-dialog-content class="package-dialog-content">
+  <h2>{{ packageName }}</h2>
+  <hr />
+  @if(packageInfo.has_monthly_price) {
+  <p><b> Montalicher Preis:</b></p>
+  <p>{{ packageInfo.monthly_price_cents / 100 }} € / Monat</p>
+  }
+  <p><b>Monatlicher Preis (Jahresabo):</b></p>
+  <p>
+    {{ packageInfo.monthly_price_yearly_subscription_in_cents / 100 }} € / Monat
+  </p>
+  <p>
+    <b>Jährliches Abo:</b>
+  </p>
+  <p>{{ packageInfo.has_monthly_price ? "Nein" : "Ja" }}</p>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+    <button mat-button mat-dialog-close>Schließen</button>
+  </mat-dialog-actions>

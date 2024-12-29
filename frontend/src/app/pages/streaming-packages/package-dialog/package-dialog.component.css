@@ -1,0 +1,8 @@
+.package-dialog-content {
+    padding: 20px; /* Padding inside the sidebar */
+    /* Center in columns */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }

@@ -1,0 +1,77 @@
+/* app.component.css */
+
+:root {
+  --violet-light: #a78bfa;
+  --violet-dark: #6d28d9;
+  --background-color: #f9f5ff;
+  --text-color: #4a4a4a;
+}
+
+.search-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.team-selection-form {
+  width: 100%;
+  max-width: 500px;
+  margin: 0 20px;
+}
+
+.team-selection-filter-form {
+  display: flex;
+  flex-direction: column;
+}
+
+.input-button-container {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.button-icon-container{
+  display: flex;
+  align-items: center;
+}
+
+.example-chip-list {
+  width: 100%;
+}
+
+.selected-teams {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.team-option {
+  z-index: 1; /* Make sure it's above the mat-option */
+}
+
+.mat-option::after {
+  content: none !important; /* Force remove the content */
+  display: none !important; /* Ensure it's hidden */
+}
+
+.mat-option span .mdc-list-item__primary-text {
+  margin: 0 !important;
+}
+
+.hidden {
+  display: none;
+}
+
+.team-option {
+  background-color: lightcoral !important;
+  opacity: 0.8;
+}
+
+.tournament-option {
+  background-color: lightyellow !important;
+}
+
+.special-option {
+  background-color: lightsalmon !important;
+}

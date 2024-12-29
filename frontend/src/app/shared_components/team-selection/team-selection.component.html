@@ -1,0 +1,116 @@
+<!-- Selected Teams Div -->
+<div class="team-selection">
+  <div class="search-container">
+    <form class="team-selection-form">
+      <mat-form-field class="example-chip-list">
+        <mat-label>Ausgewählte Teams</mat-label>
+        <mat-chip-grid #chipGrid aria-label="Fruit selection">
+          @for (option of selectedOptions; track option) {
+          <mat-chip-row
+            (removed)="removeOption(option)"
+            [ngClass]="{
+              'team-option': options[option] === 'team',
+              'tournament-option': options[option] === 'tournament',
+              'special-option': options[option] === 'special',
+              'hidden': all_selected && option != 'Alle Spiele'
+            }"
+          >
+            {{ option }}
+            <button matChipRemove [attr.aria-label]="'remove ' + option">
+              <mat-icon>cancel</mat-icon>
+            </button>
+          </mat-chip-row>
+          }
+        </mat-chip-grid>
+        <input
+          type="text"
+          placeholder="Suche dein Team"
+          matInput
+          [formControl]="teamControl"
+          #teamInput
+          [matChipInputFor]="chipGrid"
+          [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+          (matChipInputTokenEnd)="add($event)"
+          [matAutocomplete]="auto"
+        />
+        <mat-autocomplete
+          #auto="matAutocomplete"
+          (optionSelected)="selected($event)"
+        >
+          @for (option of filteredOptions; track option ) {
+          <mat-option
+            [value]="option"
+          >
+            {{ option }}
+          </mat-option>
+          }
+        </mat-autocomplete>
+      </mat-form-field>
+    </form>
+
+    <!-- Search Box with Autocomplete -->
+
+    <!-- Button to Toggle the Filter Form -->
+    <div class="input-button-container">
+      <button mat-raised-button color="secondary" (click)="toggleFilters()">
+        <div class="button-icon-container">
+          Filter
+          <mat-icon>{{
+            showFilters ? "arrow_drop_up" : "arrow_drop_down"
+          }}</mat-icon>
+        </div>
+      </button>
+
+      <button
+        mat-raised-button
+        color="primary"
+        [disabled]="selectedOptions.length === 0"
+        (click)="redirectToPackages()"
+      >
+        <div class="button-icon-container">
+          Weiter
+          <mat-icon>arrow_forward</mat-icon>
+        </div>
+      </button>
+    </div>
+
+    <!-- Filter Form (shown/hidden based on toggle) -->
+
+    <form
+      [formGroup]="filterForm"
+      class="team-selection-filter-form"
+      [ngClass]="{ hidden: !showFilters }"
+    >
+      <mat-form-field>
+        <mat-label>Enter a date range</mat-label>
+        <mat-date-range-input
+          [rangePicker]="picker"
+          [min]="DEFAULT_START_DATE"
+          [max]="DEFAULT_END_DATE"
+        >
+          <input
+            matStartDate
+            formControlName="start_date"
+            placeholder="Start date"
+          />
+          <input matEndDate formControlName="end_date" placeholder="End date" />
+        </mat-date-range-input>
+        <mat-hint>MM/DD/YYYY – MM/DD/YYYY</mat-hint>
+        <mat-datepicker-toggle
+          matIconSuffix
+          [for]="picker"
+        ></mat-datepicker-toggle>
+        <mat-date-range-picker #picker></mat-date-range-picker>
+
+        <!-- @if (filterForm.controls['start_date'].hasError('matStartDateInvalid')) {
+          <mat-error>Invalid start date</mat-error>
+        }
+        @if (filterForm.controls['end_date']hasError('matEndDateInvalid')) {
+          <mat-error>Invalid end date</mat-error>
+        } -->
+      </mat-form-field>
+    </form>
+  </div>
+
+  <router-outlet />
+</div>

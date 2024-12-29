@@ -1,13 +1,13 @@
 import { TestBed } from '@angular/core/testing';
 
-import { AboService } from './abo.service';
+import { IcalService } from './ical.service';
 
-describe('AboService', () => {
-  let service: AboService;
+describe('IcalService', () => {
+  let service: IcalService;
 
   beforeEach(() => {
     TestBed.configureTestingModule({});
-    service = TestBed.inject(AboService);
+    service = TestBed.inject(IcalService);
   });
 
   it('should be created', () => {

@@ -1,0 +1,230 @@
+<div class="grid-container">
+  <div class="sidebar">
+    <div class="home-container">
+      <a mat-icon-button [routerLink]="['/']" aria-label="Go to home page">
+        <mat-icon>home</mat-icon>
+      </a>
+      <h2>Der Footballero</h2>
+    </div>
+
+    <app-team-selection
+      [start_date]="start_date"
+      [end_date]="end_date"
+      [selectedTeams]="selectedTeams"
+      [selectedTournaments]="selectedTournaments"
+      [all_selected]="all_selected"
+    ></app-team-selection>
+  </div>
+  <div class="main-content">
+    <div class="table-container">
+      <table>
+        <thead>
+          <tr>
+            <th class="sticky-col" style="background-color: white"></th>
+            @for(package of sortedPackages; track package) {
+            <th>
+              <div class="header-icon-container">
+                {{ package }}
+                @if (selectedPackages[package]) {
+                <mat-icon matTooltip="Teil unseres besten Angebots">
+                  verified</mat-icon
+                >
+                }
+              </div>
+              <hr />
+            </th>
+
+            }
+          </tr>
+        </thead>
+        <tbody>
+          @for (competition of competition_to_games | keyvalue; track
+          competition) {
+          <tr>
+            <td class="sticky-col tournament-td">
+              <div class="inline-container">
+                <p>{{ competition.key }}</p>
+
+                <button
+                  mat-button
+                  matTooltip="Spiele anzeigen"
+                  (click)="toggleTournamentFoldout(competition.key)"
+                >
+                  <mat-icon>arrow_drop_down</mat-icon>
+                </button>
+              </div>
+              <div
+                class="dropdown-container"
+                [ngClass]="{ hidden: !tournament_foldout[competition.key] }"
+              >
+                <hr />
+                @for (tournament_games of tournamentPagination[competition.key];
+                track tournament_games) {
+                <p matTooltip="{{ tournament_games.starts_at }}">
+                  {{ tournament_games.team_home }} - <br />{{
+                    tournament_games.team_away
+                  }}
+                </p>
+                }
+                <mat-paginator
+                  [length]="competition.value.length"
+                  [pageSize]="5"
+                  [pageSizeOptions]="pageSizes"
+                  (page)="getPaginatorData($event, competition.key)"
+                ></mat-paginator>
+              </div>
+            </td>
+            @for (package of sortedPackages; track package) {
+            <td>
+              @if
+              (streamingPackages[package].competition_coverage[competition.key].uncovered_games.length
+              == 0 &&
+              streamingPackages[package].competition_coverage[competition.key].covered_games.length
+              > 0) {
+              <mat-icon
+                matTooltip="Deckt alle {{
+                  streamingPackages[package].competition_coverage[
+                    competition.key
+                  ].covered_games.length
+                }} Spiele in diesem Wettkampf ab."
+                class="icon-green large-icon"
+                >check_circle</mat-icon
+              >
+              } @else if
+              (streamingPackages[package].competition_coverage[competition.key].covered_games.length
+              > 0){
+              <mat-icon
+                matTooltip="Deckt {{
+                  streamingPackages[package].competition_coverage[
+                    competition.key
+                  ].covered_games.length
+                }} Spiele in diesem Wettkampf ab."
+                class="icon-orange large-icon"
+                >check_circle</mat-icon
+              >
+              } @else {
+              <mat-icon
+                matTooltip="Deckt keine Spiele in diesem Wettkampf ab."
+                class="icon-red large-icon"
+                >cancel</mat-icon
+              >
+              }
+
+              <div
+                class="dropdown-container-checks"
+                [ngClass]="{ hidden: !tournament_foldout[competition.key] }"
+              >
+                <hr />
+                <!-- check that game is in covered games of the package -->
+                @for (tournament_game of tournamentPagination[competition.key];
+                track tournament_game) { @if
+                (streamingPackages[package].competition_coverage[competition.key].covered_games.includes(tournament_game.game_id))
+                {
+                <mat-icon class="icon-green small-icon">check_circle</mat-icon>
+                } @else {
+                <mat-icon class="icon-red small-icon">cancel</mat-icon>
+                } }
+                <!-- <div class="spacer" style="height: 36px"></div> -->
+              </div>
+            </td>
+            }
+          </tr>
+          }
+        </tbody>
+        <tfoot class="sticky-footer">
+          <tr>
+            <td class="sticky-col" style="background-color: white"></td>
+            @for (package of sortedPackages; track package) {
+            <td>
+              <button
+                mat-raised-button
+                color="primary"
+                (click)="openPackageDetailsDialog(package)"
+                class="details-button"
+              >
+                Details
+              </button>
+            </td>
+            }
+          </tr>
+        </tfoot>
+      </table>
+    </div>
+    <div class="best-combination-section">
+      <h2 class="section-header">Beste Kombination</h2>
+      <div class="best-combination">
+        @for (package of selectedPackages | keyvalue; track package) {
+
+        <mat-card appearance="outlined" class="best-combination-card">
+          <div class="mat-card-title-container">
+            <mat-card-title>{{ package.key }}</mat-card-title>
+            @if(streamingPackages[package.key].has_monthly_price) {
+            <mat-card-subtitle
+              >{{ streamingPackages[package.key].monthly_price_cents / 100 }} €
+              / Monat</mat-card-subtitle
+            >
+            } @else {
+            <mat-card-subtitle
+              >{{
+                streamingPackages[package.key]
+                  .monthly_price_yearly_subscription_in_cents / 100
+              }}
+              € / Monat</mat-card-subtitle
+            >
+            }
+          </div>
+
+          <mat-card-content>
+            <hr />
+            <p>
+              <b>Jährliches Abo:</b><br />{{
+                streamingPackages[package.key].has_monthly_price ? "Nein" : "Ja"
+              }}
+            </p>
+            <p><b>Abo Laufzeiten:</b><br />{{ package.value.length }}</p>
+            <p>
+              <b>Gesamte Kosten:</b><br />{{
+                selectedPackagePrice(package.key) / 100
+              }}
+              €
+            </p>
+          </mat-card-content>
+        </mat-card>
+        }
+      </div>
+      <div class="best-combination-overview">
+        <h2>Ihr Preis für alle Spiele:</h2>
+        <h3>{{ totalCost / 100 }} €</h3>
+        <div class="uncovered-games-highlight">
+          <h2>Nicht abgedeckte Spiele:</h2>
+          <h3>{{ uncovered_games.length }}</h3>
+          <p>
+            Diese Spiele werden von keinem unserer analysierten Pakete
+            abgedeckt.
+          </p>
+
+          <h2>Damit haben sie eine abdeckung von</h2>
+          <h3>{{ coveredGamesPercentage().toFixed(2) }}%</h3>
+
+          @if (uncovered_games.length == 0) {
+          <p>Alle Spiele sind abgedeckt!</p>
+          }@else{
+          <button
+            mat-raised-button
+            color="secondary"
+            (click)="openUncoveredGamesDialog()"
+          >
+            Details
+          </button>
+          }
+        </div>
+        <h2>Download Ical Kalender</h2>
+        <button mat-raised-button color="primary" (click)="downloadIcal()">
+          Download
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<router-outlet />
