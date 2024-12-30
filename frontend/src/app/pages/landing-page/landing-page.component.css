@@ -58,6 +58,9 @@ section{
 .complete-coverage-section{
   background-color: black;
   color: white;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
 }
 
 .search-bar {
@@ -66,10 +69,8 @@ section{
   color: white;
 }
 
-.footer {
-  text-align: center;
-  padding: 1rem;
-  background: var(--violet-dark);
-  color: white;
-  font-size: 0.875rem;
+.text-container {
+  margin: 2rem;
+  padding: 0 2rem;
+  width: 50%;
 }

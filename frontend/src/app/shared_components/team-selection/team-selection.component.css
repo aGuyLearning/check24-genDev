@@ -62,16 +62,3 @@
 .hidden {
   display: none;
 }
-
-.team-option {
-  background-color: lightcoral !important;
-  opacity: 0.8;
-}
-
-.tournament-option {
-  background-color: lightyellow !important;
-}
-
-.special-option {
-  background-color: lightsalmon !important;
-}

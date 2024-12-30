@@ -21,16 +21,15 @@ export class DataService {
     return this.http.get<string[]>(`${API_URL}/tournaments`);
   }
 
-  get_tournament_coverage(): Observable<any> {
-    return this.http.get(`${API_URL}/get_tournament_coverage`);
-  }
-
-  getStreamingPackagesForTeamAndTournaments(teams: string[], tournaments: string[],start_date?: string): Observable<StreamingPackageOverview> {
+  getStreamingPackagesForTeamAndTournaments(teams: string[], tournaments: string[],start_date?: string, end_date?: string): Observable<StreamingPackageOverview> {
     let params: any = { teams: teams, tournaments: tournaments };
     if (start_date) {
-      console.log('start_date', start_date);
       params.start_date = start_date;
     }
+    if (end_date) {
+      params.end_date = end_date;
+    }
+
     return this.http.get<StreamingPackageOverview>(`${API_URL}/get_streaming_packages_for_team_and_tournament`, { params });
   }
 

@@ -18,9 +18,10 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { createEvent } from '../../services/ical/ical.service';
-import { firstValueFrom, forkJoin, map } from 'rxjs';
+import { firstValueFrom, forkJoin, map, take } from 'rxjs';
 import { PackageDialogComponent } from './package-dialog/package-dialog.component';
 import { UncoveredGamesDialogComponent } from './uncovered-games-dialog/uncovered-games-dialog.component';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 @Component({
   selector: 'app-streaming-packages',
@@ -39,6 +40,7 @@ import { UncoveredGamesDialogComponent } from './uncovered-games-dialog/uncovere
     MatPaginatorModule,
     MatTooltipModule,
     CommonModule,
+    MatProgressSpinnerModule,
   ],
   templateUrl: './streaming-packages.component.html',
   styleUrl: './streaming-packages.component.css',
@@ -56,60 +58,51 @@ export class StreamingPackagesComponent implements OnInit {
   selectedTournaments: string[] = [];
   competition_to_games: { [key: string]: number[] } = {};
   tournament_foldout: { [key: string]: boolean } = {};
-  icalFileName: string = 'default.ics';
+  icalFileName: string = 'games.ics';
   start_date: string = '';
   end_date: string = '';
   all_selected: boolean = false;
+  loading: boolean = false;
 
   constructor(
     private dataService: DataService,
     private route: ActivatedRoute
   ) {}
 
+  /**
+   * Initializes the component by processing query parameters and fetching streaming packages.
+   * Subscribes to query parameter changes, extracts values, and loads the necessary data.
+   *
+   * @returns {Promise<void>}
+   */
   async ngOnInit(): Promise<void> {
+    // Subscribe to query parameters and process them
     this.route.queryParams.subscribe(async (params) => {
-      if (params['tournaments']) {
-        this.selectedTournaments = params['tournaments'].split(',');
-      }
-      if (params['teams']) {
-        this.selectedTeams = params['teams'].split(',');
-      }
-      if (params['start']) {
-        this.start_date = params['start'];
-      }
-      if (params['end']) {
-        this.end_date = params['end'];
-      }
-      if (params['all']) {
-        this.all_selected = params['all'] === 'true';
-      }
+      this.processQueryParams(params); // Process query parameters
+
+      // Fetch streaming packages based on the query parameters
       await this.getStreamingPackages();
-      // initialize paginator data
-      Object.keys(this.competition_to_games).forEach((tournamentName) => {
-        this.getPaginatorData(
-          {
-            pageIndex: 0,
-            pageSize: 5,
-            length: this.competition_to_games[tournamentName].length,
-          } as PageEvent,
-          tournamentName
-        );
-      });
+
+      // Initialize paginator data for each tournament
+      this.initializePaginatorData();
     });
   }
 
   async getStreamingPackages(): Promise<void> {
     try {
       // Wait for the response using firstValueFrom
-      const streamingPackageOverview: StreamingPackageOverview = await firstValueFrom(
-        this.all_selected
-          ? this.dataService.getStreamingPackagesForAllGames()
-          : this.dataService.getStreamingPackagesForTeamAndTournaments(
-              this.selectedTeams,
-              this.selectedTournaments,
-              this.start_date
-            )
-      );
+      this.loading = true;
+      const streamingPackageOverview: StreamingPackageOverview =
+        await firstValueFrom(
+          this.all_selected
+            ? this.dataService.getStreamingPackagesForAllGames()
+            : this.dataService.getStreamingPackagesForTeamAndTournaments(
+                this.selectedTeams,
+                this.selectedTournaments,
+                this.start_date,
+                this.end_date
+              )
+        );
 
       // Handle the response data
       this.streamingPackages = streamingPackageOverview['packages'];
@@ -130,14 +123,23 @@ export class StreamingPackagesComponent implements OnInit {
       const unselectedPackages = Object.keys(this.streamingPackages).filter(
         (x) => !selectedPackages.includes(x)
       );
+      // sort packages by the number of games covered
+      selectedPackages.sort(
+        (a, b) =>
+          this.streamingPackages[b].covered_games.length -
+          this.streamingPackages[a].covered_games.length
+      );
+      unselectedPackages.sort(
+        (a, b) =>
+          this.streamingPackages[b].covered_games.length -
+          this.streamingPackages[a].covered_games.length
+      );
       this.sortedPackages = selectedPackages.concat(unselectedPackages);
+      this.loading = false;
     } catch (error) {
+      this.loading = false;
       console.error('Error fetching streaming packages', error);
     }
-  }
-
-  toggleTournamentFoldout(tournament: string): void {
-    this.tournament_foldout[tournament] = !this.tournament_foldout[tournament];
   }
 
   openPackageDetailsDialog(packageName: string): void {
@@ -159,46 +161,6 @@ export class StreamingPackagesComponent implements OnInit {
         uncoveredGames: this.uncovered_games,
       },
     });
-    console.log('openUncoveredGamesDialog');
-  }
-
-  selectedPackagePrice(packageName: string): number {
-    if (packageName in this.selectedPackages) {
-      if (this.streamingPackages[packageName].has_monthly_price) {
-        return (
-          this.streamingPackages[packageName].monthly_price_cents *
-          this.selectedPackages[packageName].length
-        );
-      }
-      return (
-        this.streamingPackages[packageName]
-          .monthly_price_yearly_subscription_in_cents *
-        this.selectedPackages[packageName].length *
-        12
-      );
-    }
-    return 0;
-  }
-
-  totalCoveredGames(): number {
-    // use set to remove duplicates
-    const coveredGames = new Set();
-    for (let key in this.selectedPackages) {
-      for (let i = 0; i < this.selectedPackages[key].length; i++) {
-        for (let j = 0; j < this.selectedPackages[key][i].games.length; j++) {
-          coveredGames.add(this.selectedPackages[key][i].games[j]);
-        }
-      }
-    }
-    return coveredGames.size;
-  }
-
-  coveredGamesPercentage(): number {
-    const totalGames = this.uncovered_games.length + this.totalCoveredGames();
-    if (totalGames === 0) {
-      return 0;
-    }
-    return (this.totalCoveredGames() / totalGames) * 100;
   }
 
   downloadIcal(): void {
@@ -251,6 +213,51 @@ export class StreamingPackagesComponent implements OnInit {
     });
   }
 
+  // UTILITY FUNCTIONS
+
+  toggleTournamentFoldout(tournament: string): void {
+    this.tournament_foldout[tournament] = !this.tournament_foldout[tournament];
+  }
+
+  selectedPackagePrice(packageName: string): number {
+    if (packageName in this.selectedPackages) {
+      if (this.streamingPackages[packageName].has_monthly_price) {
+        return (
+          this.streamingPackages[packageName].monthly_price_cents *
+          this.selectedPackages[packageName].length
+        );
+      }
+      return (
+        this.streamingPackages[packageName]
+          .monthly_price_yearly_subscription_in_cents *
+        this.selectedPackages[packageName].length *
+        12
+      );
+    }
+    return 0;
+  }
+
+  totalCoveredGames(): number {
+    // use set to remove duplicates
+    const coveredGames = new Set();
+    for (let key in this.selectedPackages) {
+      for (let i = 0; i < this.selectedPackages[key].length; i++) {
+        for (let j = 0; j < this.selectedPackages[key][i].games.length; j++) {
+          coveredGames.add(this.selectedPackages[key][i].games[j]);
+        }
+      }
+    }
+    return coveredGames.size;
+  }
+
+  coveredGamesPercentage(): number {
+    const totalGames = this.uncovered_games.length + this.totalCoveredGames();
+    if (totalGames === 0) {
+      return 0;
+    }
+    return (this.totalCoveredGames() / totalGames) * 100;
+  }
+
   getPaginatorData(event: PageEvent, tournamentName: string): void {
     const start = event.pageIndex * event.pageSize;
     let end = start + event.pageSize;
@@ -262,6 +269,37 @@ export class StreamingPackagesComponent implements OnInit {
 
     this.dataService.getGameInfo(gameIds).subscribe((data) => {
       this.tournamentPagination[tournamentName] = data;
+    });
+  }
+
+  /**
+   * Processes query parameters and assigns values to the corresponding properties.
+   *
+   * @param {any} params - The query parameters from the route.
+   */
+  private processQueryParams(params: any): void {
+    this.selectedTournaments = params['tournaments']?.split(',') || [];
+    this.selectedTeams = params['teams']?.split(',') || [];
+    this.start_date = params['start'] || '';
+    this.end_date = params['end'] || '';
+    this.all_selected = params['all'] === 'true' || false;
+  }
+
+  /**
+   * Initializes paginator data for each tournament by setting default values.
+   */
+  private initializePaginatorData(): void {
+    Object.keys(this.competition_to_games).forEach((tournamentName) => {
+      const tournamentLength = this.competition_to_games[tournamentName].length;
+
+      this.getPaginatorData(
+        {
+          pageIndex: 0,
+          pageSize: 5,
+          length: tournamentLength,
+        } as PageEvent,
+        tournamentName
+      );
     });
   }
 }

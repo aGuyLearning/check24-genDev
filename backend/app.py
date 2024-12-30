@@ -1,5 +1,6 @@
 import datetime
 from flask import Flask, abort, g, json, jsonify, request
+from flask_caching import Cache
 from flask_cors import CORS
 import sqlite3
 from streamingPackageOptimiser import find_streaming_packages_with_timeframes
@@ -7,7 +8,14 @@ from config import DATABASE, FIRST_GAME_DATE, LAST_GAME_DATE, REDUCED_DATE_FORMA
 from db_queries import *
 
 app = Flask(__name__)
-app.config["SECRET_KEY"] = "secret!"
+config = {
+    "SECRET_KEY":"secret!",
+    "DEBUG": True,          # some Flask specific configs
+    "CACHE_TYPE": "SimpleCache",  # Flask-Caching related configs
+    "CACHE_DEFAULT_TIMEOUT": 300
+}
+app.config.from_mapping(config)
+cache = Cache(app)
 CORS(app)
 
 
@@ -29,6 +37,7 @@ def query_db(query, args=(), one=False):
     return (rv[0] if rv else None) if one else rv
 
 @app.route('/tournaments')
+@cache.cached()
 def tournaments():
     try:
         tournaments = query_db(tournament_names)
@@ -39,6 +48,7 @@ def tournaments():
         return str(e)
 
 @app.route('/team_names')
+@cache.cached()
 def team_names():
     try:
         team_names = query_db(all_team_names)
@@ -84,12 +94,11 @@ def get_tournament_coverage():
         return str(e), 500
 
 @app.route('/get_streaming_packages_for_team_and_tournament')
+@cache.cached(query_string=True)
 def get_streaming_packages_for_team_and_tournament():
     try:
         team_names = request.args.getlist('teams')
         tournament_names = request.args.getlist('tournaments')
-        print(team_names)
-        print(tournament_names)
         start_time = request.args.get('start_date', datetime.datetime.now())
         # format the start time
         start_time = datetime.datetime.strptime(start_time, REDUCED_DATE_FORMAT)
@@ -97,11 +106,13 @@ def get_streaming_packages_for_team_and_tournament():
         end_time = request.args.get('end_date', LAST_GAME_DATE)
         end_time = datetime.datetime.strptime(end_time, REDUCED_DATE_FORMAT)
 
+        print(f'Start time: {start_time}, End time: {end_time}')
+
         games = query_db(get_games_by_team_name_and_tournament_name(team_names, tournament_names),team_names*2 + tournament_names + [str(start_time), str(end_time)])
 
 
         result = find_streaming_packages_with_timeframes(
-            games, query_db, start_time=start_time)
+            games, query_db)
         return result
 
     except Exception as e:
@@ -112,6 +123,7 @@ def get_streaming_packages_for_team_and_tournament():
         return str(e), 500
     
 @app.route('/get_streaming_packages_for_all_games')
+@cache.cached()
 def get_streaming_packages_for_all_games():
     try:
         start_time = request.args.get('start_date', FIRST_GAME_DATE)
@@ -123,13 +135,15 @@ def get_streaming_packages_for_all_games():
 
 
         result = find_streaming_packages_with_timeframes(
-            games, query_db, start_time=start_time)
+            games, query_db)
         return result
 
     except Exception as e:
+        e.with_traceback()
         return str(e), 500
     
 @app.route('/get_game_info')
+@cache.cached(query_string=True)
 def get_game_info():
     try:
         game_ids = request.args.getlist('game_id')

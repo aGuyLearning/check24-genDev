@@ -1,1 +1,26 @@
-<p>uncovered-games-dialog works!</p>
+<mat-dialog-content class="uncovered-games-dialog-content">
+  <h2>Nicht abgedeckte Spiele</h2>
+  @for (game of paginatedGames; track game) {
+  <mat-card class="uncovered-game-card" appearance="outlined">
+    <mat-card-header>
+      <mat-card-title><b>{{ game.team_home }}</b> - <b>{{ game.team_away }}</b></mat-card-title>
+      <mat-card-subtitle>{{ game.tournament_name }}</mat-card-subtitle>
+    </mat-card-header>
+    
+    <mat-card-content>
+        <hr>
+      <p>Das Spiel startet um: <br> {{ game.starts_at }}</p>
+    </mat-card-content>
+  </mat-card>
+  }
+
+  <mat-paginator
+    [length]="uncoveredGames.length"
+    [pageSize]="5"
+    [pageSizeOptions]="pageSizes"
+    (page)="getPaginatorData($event)"
+  ></mat-paginator>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button mat-button mat-dialog-close>Schließen</button>
+</mat-dialog-actions>

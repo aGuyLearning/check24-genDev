@@ -2,8 +2,41 @@
 .grid-container {
   display: grid;
   grid-template-columns: 1fr 7fr; /* Sidebar takes 1/4 and main content takes 3/4 */
-  gap: 20px; /* Space between columns */
+  gap: 20px; 
   height: 100vh;
+}
+
+/* SECTION STYLING */
+.section-title {
+  font-size: 2rem; 
+  font-weight: 700; /* Bold */
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
+.section-header {
+  font-size: 3rem;
+  font-weight: 700; /* Bold */
+  text-align: center;
+}
+
+.section-subheader {
+  font-size: 1.5rem;
+  font-weight: 400;
+  margin-top: 0.5rem; 
+  line-height: 1.5;
+  text-align: center;
+}
+
+
+/* Sidebar styles */
+.sidebar {
+  background-color: #f4f4f4; 
+  padding: 20px;
+  border-radius: 8px; 
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
 .home-container {
@@ -14,37 +47,6 @@
 
 .home-container h2{
   margin-bottom: 0 !important;
-}
-
-.section-title {
-  font-size: 2rem; /* Prominent and eye-catching */
-  font-weight: 700; /* Bold */
-  text-align: center;
-  margin-bottom: 1rem;
-}
-
-.section-header {
-  font-size: 3rem; /* Prominent and eye-catching */
-  font-weight: 700; /* Bold */
-  text-align: center;
-}
-
-.section-subheader {
-  font-size: 1.5rem; /* Smaller than headers */
-  font-weight: 400; /* Regular weight for contrast with headers */
-  margin-top: 0.5rem; /* Space between header and subheader */
-  line-height: 1.5;
-  text-align: center;
-}
-
-/* Sidebar styles */
-.sidebar {
-  background-color: #f4f4f4; /* Light background color for the sidebar */
-  padding: 20px; /* Padding inside the sidebar */
-  border-radius: 8px; /* Rounded corners */
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
 }
 
 /* Main content styles */
@@ -63,20 +65,6 @@
   max-height: 85vh;
 }
 
-.dropdown-container {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  margin-bottom: 20px;
-}
-
-.dropdown-container-checks {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: flex-start;
-
-}
 
 .best-combination-section {
   padding: 20px; /* Padding inside the sidebar */
@@ -120,6 +108,8 @@
   justify-content: center;
 }
 
+
+/* CARD STYLING */
 .mat-card-title-container {
   display: flex;
   flex-direction: column;
@@ -141,37 +131,14 @@ mat-card-content hr {
   margin: 10px 0;
 }
 
-.check-container {
-  display: flex;
-  align-items: center;
+.mat-card-title {
+  overflow: hidden;
+  width: 200px;
+  text-overflow: ellipsis;
 }
 
-.icon-green {
-  color: rgba(0, 128, 0, 0.7);
-}
 
-.icon-orange {
-  color: rgba(255, 166, 0, 0.7);
-}
 
-.icon-red {
-  color: rgba(255, 0, 0, 0.7);
-}
-
-.large-icon {
-  font-size: 32px;
-  height: 32px;
-  width: 32px;
-  /* margin-bottom: 12px; */
-}
-
-.small-icon {
-  font-size: 24px;
-  height: 24px;
-  width: 24px;
-  margin-bottom: 12px;
-  padding: 8px;
-}
 /* TABLE SECTION */
 table {
   font-family: Arial, Helvetica, sans-serif;
@@ -182,17 +149,15 @@ table {
 }
 
 table th {
-  font-weight: bold;
   font-size: 1rem;
   vertical-align: bottom;
   width: 100px;
-  text-overflow: ellipsis;
 }
 
 table th, .tournament-td {
   padding: 12px 15px; /* Adds comfortable padding */
   text-align: left;
-  width: 200px;
+  width: 180px;
 }
 
 tbody tr:nth-child(odd) td{
@@ -214,15 +179,8 @@ tbody td {
   width: 100px;
 }
 
-/* center table data */
 td {
   text-align: center;
-}
-
-
-
-.selected-package {
-  background-color: blue; /* Light background color for the selected package */
 }
 
 /* Sets border-radius on the top-left and bottom-left of the first table data on the table row */
@@ -237,8 +195,18 @@ tbody td:last-child,
   border-radius: 0 10px 10px 0;
 }
 
-.selected-package {
-  background-color: blue; /* Light background color for the selected package */
+.dropdown-container {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  margin-bottom: 20px;
+}
+
+.dropdown-container-checks {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
 }
 
 .inline-container {
@@ -267,7 +235,43 @@ tbody td:last-child,
 }
 
 
+/* ICON STYLING */
+.icon-green {
+  color: rgba(0, 128, 0, 0.7);
+}
+
+.icon-orange {
+  color: rgba(255, 166, 0, 0.7);
+}
+
+.icon-red {
+  color: rgba(255, 0, 0, 0.7);
+}
+
+.large-icon {
+  font-size: 32px;
+  height: 32px;
+  width: 32px;
+}
+
+.small-icon {
+  font-size: 24px;
+  height: 24px;
+  width: 24px;
+  margin-bottom: 12px;
+  padding: 8px;
+}
+
 /* Miscellaneous  */
+.loading-spinner {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  width: 100%;
+}
+
 .button-icon-container{
   display: flex;
   align-items: center;
@@ -276,9 +280,24 @@ tbody td:last-child,
 
 .header-icon-container {
   display: flex;
-  align-items: center;
+  align-items: center;  
   justify-content: space-between;
+  overflow: hidden;
+  width: 200px;
 }
+
+.header-icon-container h2 {
+  margin-bottom: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  width: 160px;
+  text-overflow: ellipsis;
+}
+
 .hidden {
   display: none;
+}
+
+.overview-header {
+  margin: 12px;
 }

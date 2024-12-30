@@ -1,0 +1,9 @@
+.uncovered-game-card {
+  margin: 10px;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  background-color: #f5f5f5;
+  border-radius: 10px;
+  cursor: pointer;
+}

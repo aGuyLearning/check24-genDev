@@ -20,7 +20,7 @@ import {
   FormsModule,
   ReactiveFormsModule,
 } from '@angular/forms';
-import { MatChipInputEvent, MatChipsModule } from '@angular/material/chips';
+import { MatChipsModule } from '@angular/material/chips';
 import {
   MatAutocompleteModule,
   MatAutocompleteSelectedEvent,
@@ -94,7 +94,6 @@ export class TeamSelectionComponent implements OnInit {
 
   async ngOnInit() {
     if (this.all_selected) {
-      console.log('all selected');
       this.selectedOptions.push('Alle Spiele');
     }
     for (const team of this.selectedTeams) {
@@ -136,18 +135,22 @@ export class TeamSelectionComponent implements OnInit {
     });
   }
 
+  /**
+   * Filters the list of options based on the user's input and selected options.
+   *
+   * - Excludes options that have already been selected or are named 'Alle Spiele'.
+   * - Returns empty list if `this.all_selected` is true.
+   * - If no input is provided (`value` is empty), returns the first 10 sorted options.
+   * - If input is provided, filters options that include the input string (case-insensitive).
+   * - Optionally appends 'Alle Spiele' to the results if `this.all_selected` is false.
+   *
+   * @param value - The search input provided by the user.
+   * @returns A list of up to 10 matching options, sorted alphabetically. Includes 'Alle Spiele' if `this.all_selected` is false.
+   */
   private _filterOptions(value: string): string[] {
-    /**
-     * Filters the list of options based on the user's input and selected options.
-     *
-     * - Excludes options that have already been selected or are named 'Alle Spiele'.
-     * - If no input is provided (`value` is empty), returns the first 10 sorted options.
-     * - If input is provided, filters options that include the input string (case-insensitive).
-     * - Optionally appends 'Alle Spiele' to the results if `this.all_selected` is false.
-     *
-     * @param value - The search input provided by the user.
-     * @returns A list of up to 10 matching options, sorted alphabetically. Includes 'Alle Spiele' if `this.all_selected` is false.
-     */
+    if (this.all_selected) {
+      return [];
+    }
     const remainingOptions = Object.keys(this.options)
       .filter(
         (option) =>
@@ -166,23 +169,11 @@ export class TeamSelectionComponent implements OnInit {
     return !this.all_selected ? result.concat(['Alle Spiele']) : result;
   }
 
-  add(event: MatChipInputEvent): void {
-    const value = (event.value || '').trim();
-
-    // Add our fruit
-    if (value) {
-      this.selectedOptions.push(value);
-    }
-
-    // Clear the input value
-    event.chipInput!.inputElement.value = '';
-    this.teamInput.nativeElement.value = '';
-
-    // Clear the input value
-    this.teamControl.setValue(null);
-  }
-
-  // Remove team when unselected
+  /**
+   * Removes an option from the selected options list and updates the filtered options.
+   *
+   * @param {string} option - The option to be removed.
+   */
   removeOption(option: string) {
     if (option === 'Alle Spiele') {
       this.all_selected = false;
@@ -193,23 +184,18 @@ export class TeamSelectionComponent implements OnInit {
       this.selectedOptions.splice(index, 1);
     }
 
-    // Update the filtered teams list
     this.filteredOptions = this._filterOptions(this.teamControl.value);
   }
 
-  // Toggle the visibility of the filters form
   toggleFilters() {
     this.showFilters = !this.showFilters;
   }
 
-  // Apply filters (optional logic for processing filters)
-  applyFilters() {
-    const filters = this.filterForm.value;
-    // You can send these filters to your backend or process them here
-  }
-
   selected(event: MatAutocompleteSelectedEvent): void {
-    if (this.selectedOptions.includes(event.option.viewValue)) {
+    if (
+      this.selectedOptions.includes(event.option.viewValue) ||
+      this.all_selected
+    ) {
       return;
     } else if (event.option.viewValue === 'Alle Spiele') {
       this.all_selected = true;
@@ -248,25 +234,35 @@ export class TeamSelectionComponent implements OnInit {
         params['tournaments'] = tournaments;
       }
     }
-      if (this.filterForm.value.start_date) {
-        // handle time zone offset
-        const form_start_date = new Date(this.filterForm.value.start_date);
-        form_start_date.setDate(form_start_date.getDate() + 1);
-        params['start'] = form_start_date.toISOString().split('T')[0];
-      } else {
-        params['start'] = this.DEFAULT_START_DATE;
-      }
-      if (this.filterForm.value.end_date) {
-        // handle time zone offset
-        const form_end_date = new Date(this.filterForm.value.end_date);
-        form_end_date.setDate(form_end_date.getDate() + 1);
-        params['end'] = form_end_date.toISOString().split('T')[0];
-      } else {
-        params['end'] = this.DEFAULT_END_DATE;
-      }
+    // Add start date with time zone offset or default value
+    params['start'] = this.getFormattedDate(
+      this.filterForm.value.start_date,
+      this.DEFAULT_START_DATE
+    );
     
+    // Add end date with time zone offset or default value
+    params['end'] = this.getFormattedDate(
+      this.filterForm.value.end_date,
+      this.DEFAULT_END_DATE
+    );
+
     this.router.navigate(['/streaming-packages'], {
       queryParams: params,
     });
+  }
+  /**
+   * Formats a date value with a time zone offset or returns a default value if the date is not provided.
+   *
+   * @param {string | null} date - The input date value from the filter form.
+   * @param {string} defaultValue - The default date value to use if the input date is not provided.
+   * @returns {string} - The formatted date string (YYYY-MM-DD).
+   */
+  private getFormattedDate(date: string | null, defaultValue: string): string {
+    if (date) {
+      const adjustedDate = new Date(date);
+      adjustedDate.setDate(adjustedDate.getDate() + 1);
+      return adjustedDate.toISOString().split('T')[0];
+    }
+    return defaultValue;
   }
 }

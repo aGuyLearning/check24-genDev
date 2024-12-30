@@ -8,12 +8,7 @@
           @for (option of selectedOptions; track option) {
           <mat-chip-row
             (removed)="removeOption(option)"
-            [ngClass]="{
-              'team-option': options[option] === 'team',
-              'tournament-option': options[option] === 'tournament',
-              'special-option': options[option] === 'special',
-              'hidden': all_selected && option != 'Alle Spiele'
-            }"
+            [ngClass]="{ hidden: all_selected && option !== 'Alle Spiele' }"
           >
             {{ option }}
             <button matChipRemove [attr.aria-label]="'remove ' + option">
@@ -30,7 +25,6 @@
           #teamInput
           [matChipInputFor]="chipGrid"
           [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
-          (matChipInputTokenEnd)="add($event)"
           [matAutocomplete]="auto"
         />
         <mat-autocomplete

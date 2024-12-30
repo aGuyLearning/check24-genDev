@@ -1,7 +1,6 @@
 import datetime
 from pulp import LpMinimize, LpProblem, LpVariable, lpSum
-from config import DATE_FORMAT, REDUCED_DATE_FORMAT
-from db_queries import get_games_by_team_name_and_tournament_name
+from config import DATE_FORMAT
 
 
 def get_package_coverage(game_ids, query_db):
@@ -132,6 +131,7 @@ def ilp_solver(covered_games, time_frames, timeframe_weight=0.001):
         problem += lpSum(game_coverage[game]) >= 1, f"cover_game_{game}"
 
      # Step 5: Solve the ILP problem
+    print('Solving ILP problem')
     problem.solve()
 
     # Step 6: Retrieve the selected timeframes (1 if selected, 0 if not)
@@ -143,19 +143,16 @@ def ilp_solver(covered_games, time_frames, timeframe_weight=0.001):
     # Step 7: Return the selected timeframes
     return selected_timeframes
 
-def find_streaming_packages_with_timeframes(games, query_db, start_time):
+def find_streaming_packages_with_timeframes(games, query_db):
     """
     Find the best combination of streaming packages to cover all games for the given teams
     Args:
     - team_names: A list of team names
     - query_db: A function to query the database
-    - start_time: The start time of the games (default: now)
     Returns:
     - result: A dictionary with the selected packages, total cost, and uncovered games
     """
     # Step 1: Get all games for the team
-    
-
     for game in games: 
         game['starts_at'] = datetime.datetime.strptime(game['starts_at'], DATE_FORMAT)
 
@@ -172,6 +169,7 @@ def find_streaming_packages_with_timeframes(games, query_db, start_time):
     
 
     packages = get_package_coverage(game_ids, query_db)
+    print('Got packages')
 
     # for each package, check if it coveres all games in a competition
     for _ , package_info in packages.items():
@@ -198,9 +196,11 @@ def find_streaming_packages_with_timeframes(games, query_db, start_time):
     # identify uncovered games
     uncovered_games = set(game_ids) - covered_games
     package_time_frames = get_timeframes_for_packages(packages, games)
+    print('Got timeframes')
 
     # Step 4: cost minimization with timeframes (Linear Integer Programming)
     selected_timeframes = ilp_solver(covered_games, package_time_frames)
+    print('Got selected timeframes')
 
     # Step 5: Format the result
     for competition in competition_to_games:
