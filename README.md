@@ -1,6 +1,7 @@
 # check24-genDev
-This repository contains the code for the 2024 check24 GenDev Scholarship challenge
+This repository contains the code for the 2024 check24 GenDev Scholarship challenge. Below is a video with a short overview of the project. 
 
+[![Video zur Abgabe](https://img.youtube.com/vi/vLLS4dwqzBs/0.jpg)](https://www.youtube.com/watch?v=vLLS4dwqzBs)
 ## Setup
 1. Clone the repository
 2. Install the requirements
@@ -61,5 +62,8 @@ Overall this was a great challenge and i learned a lot. I am looking forward to 
 - update DB to sharded DB to counteract hotspots (Bayern and Barcelona should not be on the same shard)
 - use statefull frontend to avoid reloading the team and tournament names every time the user changes the page
 - Use a faster LIp solver to all game coverage faster (With the timeframes we are close to 700000 elements in the matrix)
-- 
+- Use docker for simpler deployment of the backend
+- Use a more sophisticated calendar library to display the schedule in the frontend
+- Add a user profile to store the user's favorite teams and tournaments
+- Use sheduler to periodically run the all_games calculation and store the restults to lessen the load on the server
 
